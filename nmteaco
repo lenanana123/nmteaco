@@ -1,0 +1,98 @@
+
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>NM Tea Co. Blog</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://blog.nmteaco.com">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://blog.nmteaco.com/layout/layout.css">
+<link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;1,100;1,300;1,400;1,700&display=swap" rel="stylesheet">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="manifest" href="site.webmanifest">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+<script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+	if(window.location.hostname[0] != 'n'){	
+		location.replace('https://nmteaco.com'+ window.location.pathname+window.location.search);	
+	}
+		
+	if (location.protocol !== 'https:') {	location.replace(`https:${location.href.substring(location.protocol.length)}`);
+	}
+</script>
+<script>
+	function getCookie(name) {
+	  const value = `; ${document.cookie}`;
+	  const parts = value.split(`; ${name}=`);
+	  if (parts.length === 2) return parts.pop().split(';').shift();
+	}
+
+	function randomString(len) {
+		var p = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+		return [...Array(len)].reduce(a=>a+p[~~(Math.random()*p.length)],'');
+	}
+
+	function setCookie(name,value,days) {
+		var expires = "";
+		if (days) {
+			var date = new Date();
+			date.setTime(date.getTime() + (days*24*60*60*1000));
+			expires = "; expires=" + date.toUTCString();
+		}
+		document.cookie = name + "=" + (value || "")  + expires + ";domain=.nmteaco.com;path=/";
+		}
+
+
+	
+function loadPage(sessionID){
+	var queryString = window.location.search;	
+	(async () => {
+	  const rawResponse = await fetch('https://blog.nmteaco.com/'+queryString, {
+		method: 'POST',
+		headers: {
+		  'Accept': 'application/x-www-form-urlencoded',
+		  'Content-Type': 'application/x-www-form-urlencoded'
+		},
+		body: encodeURI('embedded=yes&sessionID='+sessionID)
+	  });
+	  const content = await rawResponse.text();
+	 document.getElementById('body').innerHTML = content;
+
+	var scripts =  document.getElementById('body').getElementsByTagName("script");	
+	for (var i = 0; i < scripts.length; i++) {
+		
+	if(scripts[i].type == "application/ld+json"){
+		continue;
+	}
+		
+		
+	var script   = document.createElement("script");
+	script.type  = "text/javascript";   // use this for linked script
+	script.text  = scripts[i].innerHTML;   // use this for inline script
+	document.head.appendChild(script);
+	}	
+
+	})();
+	
+}
+	var sessionID = getCookie("PHPSESSID");
+
+	if((sessionID === undefined) || (sessionID === null)){
+		sessionID = randomString(32);
+		setCookie('PHPSESSID',sessionID,0);
+		loadPage(sessionID);
+	} else {
+		loadPage(sessionID);
+	}
+</script>
+</head>
+<body id="body">
+</body>
+</html>
+<script defer src="https://blog.nmteaco.com/layout/js/general.js"></script>
